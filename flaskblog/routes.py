@@ -1,14 +1,6 @@
-from flask import Flask,render_template,url_for,flash,redirect
-from flask_sqlalchemy import SQLAlchemy
-from forms import RegistrationForm,LoginForm
-from model import User,Post
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'f8285140719d033ac7230676f0afeaf2'
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///site.db"
-db = SQLAlchemy(app)
-
-
+from flaskblog.forms import RegistrationForm,LoginForm
+from flaskblog.model import User,Post
+from flaskblog import app
 
 
 p = [
@@ -30,7 +22,7 @@ p = [
 @app.route("/home")
 def home():
     return render_template("home.html",post=p)
-
+from flask import render_template,url_for,flash,redirect
 @app.route("/about")
 def about():
     return render_template("about.html",title = "About Page")
