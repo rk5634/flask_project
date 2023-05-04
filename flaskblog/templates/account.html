@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="text-center">User Information</h3>
+        </div>
+        <div class="card-body">
+            <form>
+                <div class="form-group row">
+                    <label for="username" class="col-sm-3 col-form-label">Username</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="username" value={{current_user.username}} disabled>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="email" class="col-sm-3 col-form-label">Email</label>
+                    <div class="col-sm-9">
+                        <input type="email" class="form-control" id="email" value={{current_user.email}} disabled>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="first-name" class="col-sm-3 col-form-label">First Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="first-name" value={{current_user.firstname}} disabled>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="last-name" class="col-sm-3 col-form-label">Last Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="first-name" value={{current_user.lastname}} disabled> 
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
