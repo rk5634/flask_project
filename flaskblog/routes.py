@@ -1,5 +1,8 @@
+import secrets
+import os
+from PIL import Image
 from flask import render_template,url_for,flash,redirect,request
-from flaskblog.forms import RegistrationForm,LoginForm
+from flaskblog.forms import RegistrationForm,LoginForm,UpdateProfileForm
 from flaskblog.model import User,Post
 from flaskblog import app,db,bcrypt
 from flask_login import login_user,current_user,logout_user,login_required
@@ -13,7 +16,7 @@ p = [
     'date':'April 7, 2023'
     },
     {
-    'author':"RK2",
+    'author':"RKkkkkkkk2",
     'title':"Blog 2",
     'content':'Second Post Content',
     'date':'April 8, 2023'
@@ -74,12 +77,52 @@ def logout():
 @app.route("/account")
 @login_required
 def account():
-    return render_template('account.html',title = 'Account')
+    image_file = url_for('static',filename = f'profile_pics/{current_user.image_file}')
+    return render_template('account.html',title = 'Account',image_file = image_file)
 
 @app.route("/models")
 @login_required
 def models():
     return render_template('models.html',title = "Models")
+
+
+
+
+def saveimage(formimage):
+    random_hex = secrets.token_hex(8)
+    f_name,f_ext = os.path.splitext(formimage.filename)
+    image_fn = random_hex+f_ext
+    image_path = os.path.join(app.root_path,'static/profile_pics',image_fn)
+
+    output_size = (125,125)
+    i = Image.open(formimage)
+    i.thumbnail(output_size)
+    i.save(image_path)
+    return image_fn 
+    
+@app.route('/account/update_profile',methods = ['GET','POST'])
+@login_required
+def update_profile():
+    form = UpdateProfileForm()
+    if form.validate_on_submit():
+        if form.image.data:
+            image_file = saveimage(form.image.data)
+            current_user.image_file = image_file
+        user = User.query.filter_by(username = current_user.username).first()
+        user.email = form.email.data
+        user.username = form.username.data
+        user.firstname = form.firstname.data
+        user.lastname = form.lastname.data
+        db.session.commit()
+        flash('Your profile is updated!','success')
+        return redirect(url_for('account'))
+    
+    elif request.method=='GET':
+        form.firstname.data = current_user.firstname
+        form.lastname.data = current_user.lastname
+        form.username.data = current_user.username
+        form.email.data  = current_user.email
+    return render_template('updateprofile.html',form = form)
 
 
 @app.route("/rk")
