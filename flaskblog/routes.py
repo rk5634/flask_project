@@ -2,30 +2,18 @@ import secrets
 import os
 from PIL import Image
 from flask import render_template,url_for,flash,redirect,request
-from flaskblog.forms import RegistrationForm,LoginForm,UpdateProfileForm
+from flaskblog.forms import RegistrationForm,LoginForm,UpdateProfileForm,CreatePostForm
 from flaskblog.model import User,Post
 from flaskblog import app,db,bcrypt
 from flask_login import login_user,current_user,logout_user,login_required
 
 
-p = [
-    {
-    'author':"RK1",
-    'title':"Blog 1",
-    'content':'First Post Content',
-    'date':'April 7, 2023'
-    },
-    {
-    'author':"RKkkkkkkk2",
-    'title':"Blog 2",
-    'content':'Second Post Content',
-    'date':'April 8, 2023'
-    }
-]
+
 
 @app.route("/")
 @app.route("/home")
 def home():
+    p = Post.query.all()
     return render_template("home.html",post=p)
 
 @app.route("/about")
@@ -123,6 +111,20 @@ def update_profile():
         form.username.data = current_user.username
         form.email.data  = current_user.email
     return render_template('updateprofile.html',form = form)
+
+
+
+@app.route("/create_post",methods = ['GET','POST'])
+@login_required
+def new_post():
+    form = CreatePostForm()
+    if form.validate_on_submit():
+        post = Post(title = form.title.data,content = form.content.data,user_id = current_user.id)
+        db.session.add(post)
+        db.session.commit()
+        flash("New Post Created")
+        return redirect(url_for("home"))
+    return render_template("new_post.html",form=form,title="New Post")
 
 
 @app.route("/rk")

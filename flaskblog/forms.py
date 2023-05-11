@@ -44,3 +44,9 @@ class UpdateProfileForm(FlaskForm):
     email = StringField('Email',validators=[data_required(),Email(),validate_email])
     image = FileField('Profile Picture',validators=[FileAllowed(['jpg','png'])])
     update = SubmitField('Update')
+
+
+class CreatePostForm(FlaskForm):
+    title = StringField('Title',validators=[data_required(),length(min=3)])
+    content = StringField('Content',validators=[data_required(),length(min=5)])
+    submit = SubmitField('Create Post')
