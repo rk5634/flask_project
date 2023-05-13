@@ -12,12 +12,13 @@
     {% endwith %}
     {% for p in post %}
     <article class="media content-section">
+        <img class="rounded-circle article-img" src="{{ url_for('static',filename = 'profile_pics/' + p.author.image_file) }}" alt="">
         <div class="media-body">
           <div class="article-metadata">
             <a class="mr-2" href="#">{{ p.author.firstname }} {{p.author.lastname}}</a>
-            <small class="text-muted">{{ p.date_posted }}</small>
+            <small class="text-muted">{{ p.date_posted.strftime("%d/%m/%Y") }}</small>
           </div>
-          <h2><a class="article-title" href="#">{{ p.title }}</a></h2>
+          <h2><a class="article-title" href="{{ url_for('post', post_id = p.id) }}">{{ p.title }}</a></h2>
           <p class="article-content">{{ p.content }}</p>
         </div>
     </article>

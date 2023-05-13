@@ -1,8 +1,8 @@
 import secrets
 import os
 from PIL import Image
-from flask import render_template,url_for,flash,redirect,request
-from flaskblog.forms import RegistrationForm,LoginForm,UpdateProfileForm,CreatePostForm
+from flask import render_template,url_for,flash,redirect,request,abort
+from flaskblog.forms import RegistrationForm,LoginForm,UpdateProfileForm,CreatePostForm,EditPostForm
 from flaskblog.model import User,Post
 from flaskblog import app,db,bcrypt
 from flask_login import login_user,current_user,logout_user,login_required
@@ -127,6 +127,40 @@ def new_post():
     return render_template("new_post.html",form=form,title="New Post")
 
 
+@app.route("/post/<int:post_id>")
+@login_required
+def post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template("post.html",post = post,title = post.title)
+
+@app.route("/post/<int:post_id>/edit_post",methods = ["POST","GET"])
+@login_required
+def edit_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if(current_user.id != post.author.id):
+        abort(403)
+    form = EditPostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.content.data
+        db.session.commit()
+        flash("Post Updated")
+        return redirect(url_for("home"))
+    elif request.method == 'GET':
+        form.title.data = post.title
+        form.content.data = post.content
+    return render_template("edit_post.html",post = post,form =form,title = "Edit Post")
+
+@app.route("/post/<int:post_id>/delete_post",methods = ["POST"])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if current_user.id != post.author.id:
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+    flash("Post deleted successfully!")
+    return redirect(url_for('home'))
 @app.route("/rk")
 def rk():
     return "ALTAIR hello"
