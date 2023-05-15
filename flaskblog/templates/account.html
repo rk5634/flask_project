@@ -17,10 +17,21 @@
         <p class="text-secondary">{{ user.email }}</p>
         <p class="text-secondary">{{ user.firstname}} {{ user.lastname}}</p>
       </div>
+   
+      {% if user.id != current_user.id %}
+        <a class="btn btn-outline-info ml-2 align-self-end" href="{{ url_for('posts_by_user',user_id = user.id)}}" role="button">View Posts</a>
+        {% endif %}
+      </div>
+      <div>
+        
+        {% if user.id == current_user.id %}
+        <a class="btn btn-outline-primary ml-2" href="{{ url_for('update_profile')}}" role="button">Edit Profile</a>
+        <a class="btn btn-outline-info ml-2 float-right" href="{{ url_for('posts_by_user',user_id = user.id)}}" role="button">View Posts</a>
+      {% endif %}
     </div>
-    <!-- FORM HERE -->
-    {% if user.id == current_user.id %}
-    <a class="btn btn-outline-primary ml-2" href="{{ url_for('update_profile')}}" role="button">Edit Profile</a>
-    {% endif %}
+
+   
+      
+ 
   </div>
 {% endblock %}
