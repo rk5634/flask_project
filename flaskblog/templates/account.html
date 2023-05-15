@@ -13,12 +13,14 @@
     <div class="media">
       <img class="rounded-circle account-img" src="{{ image_file }}">
       <div class="media-body">
-        <h2 class="account-heading">{{ current_user.username }}</h2>
-        <p class="text-secondary">{{ current_user.email }}</p>
-        <p class="text-secondary">{{ current_user.firstname}} {{ current_user.lastname}}</p>
+        <h2 class="account-heading">{{ user.username }}</h2>
+        <p class="text-secondary">{{ user.email }}</p>
+        <p class="text-secondary">{{ user.firstname}} {{ user.lastname}}</p>
       </div>
     </div>
     <!-- FORM HERE -->
-    <a class="btn btn-outline-primary" href="{{ url_for('update_profile')}}" role="button">Edit Profile</a>
+    {% if user.id == current_user.id %}
+    <a class="btn btn-outline-primary ml-2" href="{{ url_for('update_profile')}}" role="button">Edit Profile</a>
+    {% endif %}
   </div>
 {% endblock %}

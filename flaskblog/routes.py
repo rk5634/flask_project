@@ -13,7 +13,8 @@ from flask_login import login_user,current_user,logout_user,login_required
 @app.route("/")
 @app.route("/home")
 def home():
-    p = Post.query.all()
+    page = request.args.get('page',type=int)
+    p = Post.query.order_by(Post.date_posted.desc()).paginate(per_page=4,page=page)
     return render_template("home.html",post=p)
 
 @app.route("/about")
@@ -62,11 +63,12 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-@app.route("/account")
+@app.route("/account/<int:account_id>")
 @login_required
-def account():
-    image_file = url_for('static',filename = f'profile_pics/{current_user.image_file}')
-    return render_template('account.html',title = 'Account',image_file = image_file)
+def account(account_id):
+    user = User.query.get(account_id)
+    image_file = url_for('static',filename = f'profile_pics/{user.image_file}')
+    return render_template('account.html',title = 'Account',image_file = image_file,user = user)
 
 @app.route("/models")
 @login_required
@@ -161,6 +163,10 @@ def delete_post(post_id):
     db.session.commit()
     flash("Post deleted successfully!")
     return redirect(url_for('home'))
+
+
+
+
 @app.route("/rk")
 def rk():
     return "ALTAIR hello"
