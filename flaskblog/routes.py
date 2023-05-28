@@ -2,7 +2,8 @@ import secrets
 import os
 from PIL import Image
 from flask import render_template,url_for,flash,redirect,request,abort
-from flaskblog.forms import RegistrationForm,LoginForm,UpdateProfileForm,CreatePostForm,EditPostForm
+from flaskblog.forms import (RegistrationForm,LoginForm,UpdateProfileForm,
+                             CreatePostForm,EditPostForm,RequestResetPasswordForm)
 from flaskblog.model import User,Post
 from flaskblog import app,db,bcrypt
 from flask_login import login_user,current_user,logout_user,login_required
@@ -171,6 +172,20 @@ def posts_by_user(user_id):
     user = User.query.get_or_404(user_id)
     p = Post.query.filter_by(author = user).order_by(Post.date_posted.desc()).paginate(per_page=4,page=page)
     return render_template("post_by_user.html",post=p,user=user)
+
+@app.route('/resetpassword',methods=['GET','POST'])
+def resetpasswordform():
+    form = RequestResetPasswordForm()
+    if form.validate_on_submit():
+        mail = form.email.data
+        user = User.query.filter_by(email = mail).first()
+        print(f"user============== {user}")
+        if(user):
+            pass
+        else:
+            flash(f"No Account exists with email {form.email.data}")
+            # return redirect(url_for('home'))
+    return render_template("resetpasswordemail.html",form=form,title="Reset Password")
 
 
 

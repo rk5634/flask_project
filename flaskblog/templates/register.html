@@ -99,13 +99,12 @@
             </fieldset>
             <div class = "form-group">
                 {{form.submit(class = "btn btn-outline-info")}}
+                <div class="pt-3">
+                    <small class = "text-muted">
+                        Already have an account? <a class = "ml-2" href="{{url_for('login')}}">Sign in</a>
+                    </small>
+                </div>
             </div>
         </form>
-    </div>
-    <div class="border-top pt-3">
-        <small class = "text-muted">
-            Already have an account? <a class = "ml-2" href="{{url_for('login')}}">Sign in</a>
-        </small>
-
     </div>
 {% endblock content %}

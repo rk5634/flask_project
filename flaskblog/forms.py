@@ -18,6 +18,8 @@ def validate_email(self,email):
     user = User.query.filter_by(email = email.data).first()
     if(user):
         raise ValidationError("Email already exists")
+    
+
 class RegistrationForm(FlaskForm):
     firstname = StringField('First Name',validators=[data_required(),length(min=2,max=20)])
     lastname = StringField('Last Name',validators=[length(min=0,max=20)])
@@ -55,3 +57,7 @@ class EditPostForm(FlaskForm):
     title = StringField('Title',validators=[data_required(),length(min=3)])
     content = StringField('Content',validators=[data_required(),length(min=5)])
     submit = SubmitField('Update')
+
+class RequestResetPasswordForm(FlaskForm):
+    email = StringField("Email",validators=[data_required(),Email()])
+    submit = SubmitField("Proceed")
