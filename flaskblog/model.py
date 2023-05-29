@@ -1,6 +1,8 @@
 from flaskblog import db,login
-from datetime import datetime
+from datetime import datetime,timedelta
 from flask_login import UserMixin
+import jwt
+import os
 
 @login.user_loader
 def load_user(user_id):
@@ -15,6 +17,22 @@ class User(db.Model,UserMixin):
     image_file = db.Column(db.String(20),nullable = False, default = 'default.jpg')
     password = db.Column(db.String(60),nullable = False)
     posts = db.relationship("Post",backref = "author",lazy = True)
+
+    def get_reset_token(self,exp_time=1800):
+        x = jwt.encode({"user_id":self.id,
+                        "exp":int((datetime.now()+timedelta(seconds=exp_time)).timestamp())},
+                        os.environ.get('SECRET_KEY'),
+                        algorithm="HS256")
+        return x
+    
+    @staticmethod
+    def verify_reset_token(token):
+        try:
+            d = jwt.decode(token,os.environ.get("SECRET_KEY"),algorithms="HS256")
+        except:
+            return None
+        return User.query.get(d['user_id'])
+
 
     def __repr__(self):
         return f'{self.firstname}, {self.lastname}, {self.username}, {self.email}, {self.image_file}'
