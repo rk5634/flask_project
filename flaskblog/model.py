@@ -18,7 +18,7 @@ class User(db.Model,UserMixin):
     password = db.Column(db.String(60),nullable = False)
     posts = db.relationship("Post",backref = "author",lazy = True)
 
-    def get_reset_token(self,exp_time=1800):
+    def get_reset_token(self,exp_time=30):
         x = jwt.encode({"user_id":self.id,
                         "exp":int((datetime.now()+timedelta(seconds=exp_time)).timestamp())},
                         os.environ.get('SECRET_KEY'),

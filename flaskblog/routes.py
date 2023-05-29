@@ -179,13 +179,18 @@ def posts_by_user(user_id):
 def send_reset_password_email(user):
     token = user.get_reset_token()
     print("token generated",token)
-    msg = Message("Password Reset Request",sender=os.environ.get('MAIL_USER'),recipients=[user.email])
-    msg.body = f'''Click on the following link to reset your password
+    print("user email = ",user.email)
+    subject = "Password Reset Request"
+    body = f'''Click on the following link to reset your password
+
 {url_for('resetpassword',token=token,_external=True)}
-if you didn't make this request then ignore this message.
-'''
+
+if you didn't make this request then ignore this message.'''
+    msg = Message(subject,sender=app.config['MAIL_USERNAME'],recipients=[user.email])
+    msg.body = body
     print('********************************************')
     mail.send(msg)
+    print("message_sent")
 
 @app.route('/resetpasswordemail',methods=['GET','POST'])
 def resetpasswordemail():
@@ -206,12 +211,14 @@ def resetpasswordemail():
 
 
 
-@app.route("/resetpassword/<token>",methods=['POST'])
+@app.route("/resetpassword/<token>",methods=['GET','POST'])
 def resetpassword(token):
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     user = User.verify_reset_token(token)
+    print("\n-------------------------------------------------------Hi\n")
     if not user:
+        print("\n-------------------------------------------------------NOT USER\n")
         flash("Link is invalid or expired")
         return redirect(url_for("resetpasswordemail"))
     else:
